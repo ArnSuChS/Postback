@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: kite-postback-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 app:app"
+    plan: free

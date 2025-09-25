@@ -1,20 +1,17 @@
 from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO
 import sqlite3
-from gevent import monkey
 import os
-
-monkey.patch_all()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
-socketio = SocketIO(app, cors_allowed_origins="*")
+
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 DB_NAME = "postback_data.db"
 
 
 def init_db():
-    """Initialize SQLite database"""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("""
@@ -55,7 +52,6 @@ def dashboard():
 
 @app.route("/kite_postback", methods=["POST"])
 def kite_postback():
-    """Receive postbacks from Zerodha"""
     try:
         data = request.get_json(force=True)
     except Exception:

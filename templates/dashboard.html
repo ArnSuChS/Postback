@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Postback Dashboard</title>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h2>Zerodha Postback Logs (Live)</h2>
+    <table id="postbackTable">
+        <tr>
+            <th>Order ID</th>
+            <th>Status</th>
+            <th>Symbol</th>
+            <th>Transaction</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Exchange</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.get("order_id", "") }}</td>
+            <td>{{ log.get("status", "") }}</td>
+            <td>{{ log.get("tradingsymbol", "") }}</td>
+            <td>{{ log.get("transaction_type", "") }}</td>
+            <td>{{ log.get("quantity", "") }}</td>
+            <td>{{ log.get("price", "") }}</td>
+            <td>{{ log.get("exchange", "") }}</td>
+            <td>{{ log.get("order_timestamp", "") }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        const socket = io();
+
+        socket.on("new_postback", function(data) {
+            console.log("New postback:", data);
+
+            // Create a new row
+            const table = document.getElementById("postbackTable");
+            const row = table.insertRow(-1);
+
+            row.insertCell(0).innerText = data.order_id || "";
+            row.insertCell(1).innerText = data.status || "";
+            row.insertCell(2).innerText = data.tradingsymbol || "";
+            row.insertCell(3).innerText = data.transaction_type || "";
+            row.insertCell(4).innerText = data.quantity || "";
+            row.insertCell(5).innerText = data.price || "";
+            row.insertCell(6).innerText = data.exchange || "";
+            row.insertCell(7).innerText = data.order_timestamp || "";
+        });
+    </script>
+</body>
+</html>

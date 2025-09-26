@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 DB_NAME = "postback_data.db"
 
@@ -79,7 +79,5 @@ def kite_postback():
 
 
 if __name__ == "__main__":
-    import uvicorn
     port = int(os.environ.get("PORT", 5000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
-
+    socketio.run(app, host="0.0.0.0", port=port)

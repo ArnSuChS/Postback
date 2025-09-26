@@ -6,10 +6,10 @@ import os
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
 
+# Use eventlet for async mode
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 DB_NAME = "postback_data.db"
-
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
@@ -28,14 +28,11 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
-
 
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/dashboard")
 def dashboard():
@@ -48,7 +45,6 @@ def dashboard():
     rows = cursor.fetchall()
     conn.close()
     return render_template("dashboard.html", rows=rows)
-
 
 @app.route("/kite_postback", methods=["POST"])
 def kite_postback():
@@ -76,7 +72,6 @@ def kite_postback():
     socketio.emit("new_postback", data)
 
     return jsonify({"message": "Postback received"}), 200
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

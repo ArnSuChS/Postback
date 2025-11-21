@@ -7,7 +7,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
 
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
-
 DB_NAME = "postback_data.db"
 
 def init_db():
@@ -73,4 +72,6 @@ def kite_postback():
     return jsonify({"message": "Postback received"}), 200
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    socketio.run(app, host="0.0.0.0", port=port, allow_unsafe_werkzeug=True)
